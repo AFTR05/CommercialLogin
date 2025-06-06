@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -118,9 +119,15 @@ fun HomeScreen(email: String, navigateBack: () -> Unit) {
             )
         }
     ) { innerPadding ->
-        LazyColumn(modifier = Modifier.padding(innerPadding)) {
-            items(productosPrueba) { product ->
-                ProductCard(product = product)
+        if (products.isEmpty()){
+            Column {
+                Text("No hay productos")
+            }
+        } else{
+            LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                items(products) { product ->
+                    ProductCard(product = product)
+                }
             }
         }
     }
@@ -184,5 +191,12 @@ fun ProductCard(product: Product) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+
+fun subirProductosDePrueba(db: FirebaseFirestore, productos: List<Product>) {
+    productos.forEach { producto ->
+        db.collection("productos").add(producto)
     }
 }
